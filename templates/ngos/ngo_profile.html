@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}NGO Profile - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>{% if is_new %}Create{% else %}Update{% endif %} NGO Profile</h3>
+            </div>
+            <div class="card-body">
+                {% if is_new %}
+                    <div class="alert alert-info">
+                        <h5>Welcome to FoodConnect!</h5>
+                        <p>Please complete your NGO profile to start accepting donations. This information will help donors understand your organization and capabilities.</p>
+                    </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            {% if is_new %}Create Profile{% else %}Update Profile{% endif %}
+                        </button>
+                        <a href="{% url 'main:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

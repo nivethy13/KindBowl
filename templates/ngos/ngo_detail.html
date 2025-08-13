@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ ngo.organization_name }} - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>{{ ngo.organization_name }}</h3>
+                {% if ngo.is_verified %}
+                    <span class="badge bg-success">Verified NGO</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if ngo.description %}
+                    <h5>About</h5>
+                    <p>{{ ngo.description }}</p>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Organization Details</h5>
+                        <ul class="list-unstyled">
+                            {% if ngo.registration_number %}
+                                <li><strong>Registration:</strong> {{ ngo.registration_number }}</li>
+                            {% endif %}
+                            {% if ngo.capacity %}
+                                <li><strong>Capacity:</strong> {{ ngo.capacity }} meals/day</li>
+                            {% endif %}
+                            {% if ngo.address %}
+                                <li><strong>Address:</strong> {{ ngo.address }}</li>
+                            {% endif %}
+                            {% if ngo.latitude and ngo.longitude %}
+                                <li><strong>Location:</strong> {{ ngo.latitude }}, {{ ngo.longitude }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Contact Information</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Contact Person:</strong> {{ ngo.user.get_full_name|default:ngo.user.username }}</li>
+                            <li><strong>Email:</strong> {{ ngo.user.email }}</li>
+                            {% if ngo.user.phone %}
+                                <li><strong>Phone:</strong> {{ ngo.user.phone }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                {% if ngo.working_hours %}
+                    <h5>Working Hours</h5>
+                    <p>{{ ngo.working_hours }}</p>
+                {% endif %}
+                
+                {% if ngo.specializations %}
+                    <h5>Specializations</h5>
+                    <p>{{ ngo.specializations }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'donations:list' %}" class="btn btn-primary w-100 mb-2">Browse Donations</a>
+                <a href="{% url 'ngos:list' %}" class="btn btn-outline-secondary w-100">Back to NGOs</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

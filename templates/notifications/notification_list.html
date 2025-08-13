@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Notifications</h2>
+            <div>
+                {% if unread_count > 0 %}
+                    <a href="{% url 'notifications:mark_all_read' %}" class="btn btn-outline-primary me-2">Mark All Read</a>
+                {% endif %}
+                <a href="{% url 'notifications:clear_all' %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to clear all notifications?')">Clear All</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        {% if notifications %}
+            <div class="list-group">
+                {% for notification in notifications %}
+                <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ notification.title }}</h6>
+                            <p class="mb-1">{{ notification.message }}</p>
+                            <small class="text-muted">
+                                {{ notification.created_at|timesince }} ago
+                                {% if notification.related_donation %}
+                                    • <a href="{% url 'donations:detail' notification.related_donation.pk %}">View Donation</a>
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="ms-3">
+                            {% if not notification.is_read %}
+                                <a href="{% url 'notifications:mark_read' notification.id %}" class="btn btn-sm btn-outline-success me-1">Mark Read</a>
+                            {% endif %}
+                            <a href="{% url 'notifications:delete' notification.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this notification?')">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <h4>No notifications</h4>
+                <p class="text-muted">You're all caught up!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

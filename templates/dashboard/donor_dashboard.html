@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome, {{ user.username }}!</h2>
+        <p class="text-muted">Here's your donation impact overview.</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-primary">{{ total_donations }}</h3>
+                <p class="card-text">Total Donations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-success">{{ completed_donations }}</h3>
+                <p class="card-text">Completed Donations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-info">{{ total_meals }}</h3>
+                <p class="card-text">Meals Served</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'donations:create' %}" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-plus"></i> Create Donation
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'donations:my_donations' %}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-list"></i> My Donations
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'donations:list' %}" class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="fas fa-search"></i> Browse Donations
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-outline-info w-100 mb-2">
+                            <i class="fas fa-user"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Donations -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Recent Donations</h5>
+                <a href="{% url 'donations:my_donations' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_donations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Food Type</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in recent_donations %}
+                                <tr>
+                                    <td>{{ donation.get_food_type_display }}</td>
+                                    <td>{{ donation.quantity }} {{ donation.unit }}</td>
+                                    <td>
+                                        <span class="badge {% if donation.status == 'available' %}bg-success{% elif donation.status == 'accepted' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ donation.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ donation.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'donations:detail' donation.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <h6>No donations yet</h6>
+                        <p class="text-muted">Start making a difference by creating your first donation.</p>
+                        <a href="{% url 'donations:create' %}" class="btn btn-primary">Create Donation</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

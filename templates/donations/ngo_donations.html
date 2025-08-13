@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Accepted Donations - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Accepted Donations</h2>
+        <p class="text-muted">Donations your organization has accepted and is managing.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if accepted_donations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Food Type</th>
+                                    <th>Quantity</th>
+                                    <th>Donor</th>
+                                    <th>Status</th>
+                                    <th>Accepted</th>
+                                    <th>Estimated Meals</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation_history in accepted_donations %}
+                                <tr>
+                                    <td>{{ donation_history.donation.get_food_type_display }}</td>
+                                    <td>{{ donation_history.donation.quantity }} {{ donation_history.donation.unit }}</td>
+                                    <td>{{ donation_history.donation.donor.username }}</td>
+                                    <td>
+                                        <span class="badge {% if donation_history.status == 'completed' %}bg-success{% elif donation_history.status == 'accepted' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ donation_history.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ donation_history.accepted_at|date:"M d, Y" }}</td>
+                                    <td>{{ donation_history.estimated_meals }}</td>
+                                    <td>
+                                        <a href="{% url 'donations:detail' donation_history.donation.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <h6>No accepted donations yet</h6>
+                        <p class="text-muted">Start accepting donations to help those in need.</p>
+                        <a href="{% url 'donations:list' %}" class="btn btn-primary">Browse Donations</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

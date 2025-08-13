@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}My Donations - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>My Donations</h2>
+            <a href="{% url 'donations:create' %}" class="btn btn-primary">Create New Donation</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for donation in donations %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            {% if donation.image %}
+                <img src="{{ donation.image.url }}" class="card-img-top" alt="{{ donation.food_type }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-utensils fa-3x text-muted"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ donation.get_food_type_display }}</h5>
+                <p class="card-text">{{ donation.quantity }} {{ donation.unit }}</p>
+                <p class="card-text">{{ donation.description|truncatewords:15 }}</p>
+                <p class="card-text">
+                    <span class="badge {% if donation.status == 'available' %}bg-success{% elif donation.status == 'accepted' %}bg-warning{% else %}bg-secondary{% endif %}">
+                        {{ donation.get_status_display }}
+                    </span>
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Created: {{ donation.created_at|date:"M d, Y H:i" }}
+                    </small>
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Available until: {{ donation.available_until|date:"M d, Y H:i" }}
+                    </small>
+                </p>
+                <div class="d-grid">
+                    <a href="{% url 'donations:detail' donation.pk %}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <h4>No donations yet</h4>
+            <p class="text-muted">Start making a difference by creating your first donation.</p>
+            <a href="{% url 'donations:create' %}" class="btn btn-primary">Create Donation</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

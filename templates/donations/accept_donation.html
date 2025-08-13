@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Accept Donation - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Accept Donation</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Donation Details</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Food Type:</strong> {{ donation.get_food_type_display }}</li>
+                            <li><strong>Quantity:</strong> {{ donation.quantity }} {{ donation.unit }}</li>
+                            <li><strong>Donor:</strong> {{ donation.donor.username }}</li>
+                            <li><strong>Available Until:</strong> {{ donation.available_until|date:"M d, Y H:i" }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Description</h5>
+                        <p>{{ donation.description }}</p>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Accept Donation</button>
+                        <a href="{% url 'donations:detail' donation.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

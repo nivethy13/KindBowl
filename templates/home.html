@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Welcome to FoodConnect!</h1>
+            <p class="lead">Connecting food donors with NGOs to reduce waste and help those in need.</p>
+            <hr class="my-4">
+            <p>Join our community of donors and NGOs to make a difference in your community.</p>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'accounts:register' %}" role="button">Get Started</a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'accounts:login' %}" role="button">Login</a>
+            {% else %}
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'donations:list' %}" role="button">Browse Donations</a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'main:dashboard' %}" role="button">Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-primary">{{ total_donations }}</h3>
+                <p class="card-text">Total Donations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-success">{{ total_ngos }}</h3>
+                <p class="card-text">Registered NGOs</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-info">1000+</h3>
+                <p class="card-text">Meals Served</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title text-warning">500+</h3>
+                <p class="card-text">People Helped</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if recent_donations %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h2>Recent Donations</h2>
+        <div class="row">
+            {% for donation in recent_donations %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if donation.image %}
+                        <img src="{{ donation.image.url }}" class="card-img-top" alt="{{ donation.food_type }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ donation.get_food_type_display }}</h5>
+                        <p class="card-text">{{ donation.quantity }} {{ donation.unit }}</p>
+                        <p class="card-text"><small class="text-muted">By {{ donation.donor.username }}</small></p>
+                        <a href="{% url 'donations:detail' donation.pk %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">For Donors</h5>
+                <p class="card-text">Easily share your leftover food with nearby NGOs. Track your impact and see how many people you've helped.</p>
+                <ul class="list-unstyled">
+                    <li>✓ Simple donation creation</li>
+                    <li>✓ Track your impact</li>
+                    <li>✓ Connect with NGOs</li>
+                </ul>
+                <a href="{% url 'donations:create' %}" class="btn btn-primary">Create Donation</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">For NGOs</h5>
+                <p class="card-text">Find and accept food donations from local donors. Manage your organization's profile and track donations.</p>
+                <ul class="list-unstyled">
+                    <li>✓ Browse available donations</li>
+                    <li>✓ Manage your profile</li>
+                    <li>✓ Track accepted donations</li>
+                </ul>
+                <a href="{% url 'donations:list' %}" class="btn btn-primary">Browse Donations</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

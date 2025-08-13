@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ donation.get_food_type_display }} - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>{{ donation.get_food_type_display }}</h3>
+            </div>
+            <div class="card-body">
+                {% if donation.image %}
+                    <img src="{{ donation.image.url }}" class="img-fluid rounded mb-3" alt="{{ donation.food_type }}">
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Details</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Quantity:</strong> {{ donation.quantity }} {{ donation.unit }}</li>
+                            <li><strong>Food Type:</strong> {{ donation.get_food_type_display }}</li>
+                            <li><strong>Status:</strong> 
+                                <span class="badge {% if donation.status == 'available' %}bg-success{% elif donation.status == 'accepted' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ donation.get_status_display }}
+                                </span>
+                            </li>
+                            <li><strong>Available Until:</strong> {{ donation.available_until|date:"M d, Y H:i" }}</li>
+                            <li><strong>Pickup Option:</strong> {% if donation.pickup_option %}Yes{% else %}No{% endif %}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Donor Information</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Donor:</strong> {{ donation.donor.username }}</li>
+                            <li><strong>Created:</strong> {{ donation.created_at|date:"M d, Y H:i" }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h5>Description</h5>
+                <p>{{ donation.description }}</p>
+                
+                {% if donation.drop_off_address %}
+                    <h5>Drop-off Address</h5>
+                    <p>{{ donation.drop_off_address }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body">
+                {% if donation.status == 'available' %}
+                    {% if user.is_authenticated and user.user_type == 'ngo' %}
+                        <a href="{% url 'donations:accept' donation.pk %}" class="btn btn-success w-100 mb-2">Accept Donation</a>
+                    {% elif user.is_authenticated and user.user_type == 'donor' and donation.donor == user %}
+                        <a href="#" class="btn btn-warning w-100 mb-2">Edit Donation</a>
+                        <a href="#" class="btn btn-danger w-100 mb-2">Cancel Donation</a>
+                    {% else %}
+                        <p class="text-muted">Only NGOs can accept donations.</p>
+                    {% endif %}
+                {% endif %}
+                
+                <a href="{% url 'donations:list' %}" class="btn btn-outline-secondary w-100">Back to Donations</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

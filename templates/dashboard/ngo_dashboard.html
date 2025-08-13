@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}NGO Dashboard - FoodConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome, {% if ngo_profile %}{{ ngo_profile.organization_name }}{% else %}{{ user.username }}{% endif %}!</h2>
+        <p class="text-muted">Here's your organization's impact overview.</p>
+    </div>
+</div>
+
+{% if needs_profile %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <h5>Profile Setup Required</h5>
+                <p>Please complete your NGO profile to start accepting donations.</p>
+                <a href="{% url 'ngos:profile' %}" class="btn btn-primary">Complete Profile</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title text-primary">{{ total_accepted }}</h3>
+                    <p class="card-text">Accepted Donations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title text-success">{{ completed_donations }}</h3>
+                    <p class="card-text">Completed Donations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title text-info">{{ total_meals }}</h3>
+                    <p class="card-text">Meals Served</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{% url 'donations:list' %}" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-search"></i> Browse Donations
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'donations:ngo_donations' %}" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fas fa-list"></i> Accepted Donations
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'ngos:profile' %}" class="btn btn-outline-secondary w-100 mb-2">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-info w-100 mb-2">
+                                <i class="fas fa-user"></i> User Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Accepted Donations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Accepted Donations</h5>
+                    <a href="{% url 'donations:ngo_donations' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_donations %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Food Type</th>
+                                        <th>Quantity</th>
+                                        <th>Donor</th>
+                                        <th>Status</th>
+                                        <th>Accepted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donation_history in recent_donations %}
+                                    <tr>
+                                        <td>{{ donation_history.donation.get_food_type_display }}</td>
+                                        <td>{{ donation_history.donation.quantity }} {{ donation_history.donation.unit }}</td>
+                                        <td>{{ donation_history.donation.donor.username }}</td>
+                                        <td>
+                                            <span class="badge {% if donation_history.status == 'completed' %}bg-success{% elif donation_history.status == 'accepted' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                                {{ donation_history.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ donation_history.accepted_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            <a href="{% url 'donations:detail' donation_history.donation.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <h6>No accepted donations yet</h6>
+                            <p class="text-muted">Start accepting donations to help those in need.</p>
+                            <a href="{% url 'donations:list' %}" class="btn btn-primary">Browse Donations</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
